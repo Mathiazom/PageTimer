@@ -1,47 +1,41 @@
-console.log(window.localStorage);
-
 let startTime;
 
+// GET STARTTIME FROM LOCALSTORAGE (IF AVAILABLE)
 if(window.localStorage.timeSpent > 0){
   startTime = new Date().getTime() - window.localStorage.timeSpent;
 }else{
   startTime = new Date().getTime();
 }
 
+// TIMER HTML ELEMENT
 let timerEl = document.createElement("p");
-timerEl.innerHTML = "<p style='font-size:10px;margin:0;'>Time on" + getDomain() + "</p>00:00:00";
 timerEl.id = "timerEl";
-timerEl.style.position = "fixed";
-timerEl.style.bottom = "7px";
-timerEl.style.right = "10px";
-timerEl.style.width = "150px";
-timerEl.style.background = "#212121";
-timerEl.style.color = "#eee";
-timerEl.style.padding = "10px";
-timerEl.style.margin = "0px";
-timerEl.style.textAlign = "center";
-timerEl.style.fontSize = "15px";
+timerEl.style.cssText = "position:fixed;bottom:7px;right:10px;width:150px;background:#212121;color:#eee;padding:10px;margin:0px;text-align:center;font-size:15px;font-family:Helvetica,sans-serif;"
 document.documentElement.appendChild(timerEl);
 
 
-
 function checkTime(){
-  var currentTime = Math.floor((new Date().getTime()-startTime)/1000);
+  // GET TIME SPENT ON WEBSITE
+  var currentTime = (new Date().getTime()-startTime);
+  
+  // STORE IN LOCALSTORAGE
+  window.localStorage.timeSpent = currentTime;
 
-  window.localStorage.timeSpent = (new Date().getTime()-startTime);
-  console.log(window.localStorage.timeSpent);
+  // CONVERT TO MILLIS
+  currentTime = Math.floor(currentTime/1000);
 
+  // GET HOURS, MINUTES AND SECONDS (WITH ZEROS)
   var h = addZero(Math.floor(currentTime / 3600));
-  currentTime = currentTime % 3600;
+  currentTime %= 3600;
   var m = addZero(Math.floor(currentTime / 60));
-  currentTime = currentTime % 60;
+  currentTime %= 60;
   var s = addZero(currentTime);
 
+  // PUSH RESULT TO TIMER HTML ELEMENT
   document.getElementById('timerEl').innerHTML = "<p style='font-size:10px;margin:5px;'>Time on <i>" + getDomain() + "</i></p>" + h + ":" + m + ":" + s;
-
-
 }
 
+// GET CURRENT DOMAIN (www.domain.tld)
 function getDomain(){
   var d = window.location.href;
   var domain = (new URL(d)).hostname;
@@ -49,6 +43,7 @@ function getDomain(){
   return domain;
 }
 
+// ADD EXTRA ZERO IF NEEDED (2:5:23 --> 02:05:23)
 function addZero(s){
 
   s = s.toString();
@@ -59,6 +54,7 @@ function addZero(s){
   return s;
 }
 
+// REFRESH TIME SPENT
 setInterval(function(){
   checkTime();
 },100);
